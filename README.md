@@ -1,10 +1,12 @@
 <div align="center">
 
-<img src="assets/agent-retry-hero.png" alt="agent-retry — Vedic Arsenal" width="100%" />
+<img src="assets/agent-retry-hero.png" alt="agent-retry — Vedic Arsenal by Darshankumar Joshi" width="100%" />
 
 # ⚡ agent-retry
 
-### *पुनर्जन्म* — Punarjanma — the eternal cycle of retry until moksha
+<h3><em>पुनर्जन्म</em></h3>
+
+> *Punarjanma — the eternal cycle of retry until moksha*
 
 **Retry strategies and fallback chains for LLM agents — exponential backoff, jitter, model fallback, dead letter queue. Zero dependencies.**
 
@@ -39,6 +41,21 @@ Or clone directly:
 git clone https://github.com/darshjme/agent-retry.git
 cd agent-retry
 pip install -e .
+```
+
+## How It Works
+
+```mermaid
+flowchart LR
+    A[LLM Call] --> B{Success?}
+    B -- Yes --> C[Return Result]
+    B -- No --> D[agent-retry]
+    D --> E{Attempts < Max?}
+    E -- Yes --> F[Exponential Backoff]
+    F --> A
+    E -- No --> G[Dead Letter Queue]
+    style D fill:#6b21a8,color:#fff
+    style F fill:#1a0a2e,color:#9b59b6
 ```
 
 ## Quick Start
@@ -90,7 +107,7 @@ MIT — use freely, build freely.
 
 <div align="center">
 
-**Built with ⚡ by [Darshankumar Joshi](https://github.com/darshjme)**
+**Built with ⚡ by [Darshankumar Joshi](https://github.com/darshjme)** · [@thedarshanjoshi](https://twitter.com/thedarshanjoshi)
 
 *"कर्मण्येवाधिकारस्ते मा फलेषु कदाचन"*
 *Your right is to action alone, never to the fruits thereof.*
