@@ -1,27 +1,32 @@
-# agent-retry
+<div align="center">
 
-> Zero-dependency Python library for resilient LLM agent calls — exponential backoff, jitter, fallback model chains, and dead letter queues.
+<img src="assets/agent-retry-hero.png" alt="agent-retry — Vedic Arsenal" width="100%" />
 
-[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Zero Dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen.svg)]()
+# ⚡ agent-retry
 
----
+### *पुनर्जन्म* — Punarjanma — the eternal cycle of retry until moksha
 
-## The Problem
+**Retry strategies and fallback chains for LLM agents — exponential backoff, jitter, model fallback, dead letter queue. Zero dependencies.**
 
-LLM APIs fail. Constantly.
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=flat-square&logo=python)](https://python.org)
+[![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero-brightgreen?style=flat-square)](https://github.com/darshjme/agent-retry)
+[![Tests](https://img.shields.io/badge/Tests-Passing-success?style=flat-square)](https://github.com/darshjme/agent-retry/actions)
+[![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
+[![Vedic Arsenal](https://img.shields.io/badge/Vedic%20Arsenal-100%20libs-purple?style=flat-square)](https://github.com/darshjme/arsenal)
 
-- Rate limits hit at 3am during your batch job
-- `gpt-4` goes down during a product demo
-- Network blips during long inference calls
-- One model fails, the backup model just works
+*Part of the [**Vedic Arsenal**](https://github.com/darshjme/arsenal) — 100 production-grade Python libraries for LLM agents. Zero dependencies. Battle-tested.*
 
-Most teams handle this with ad-hoc `try/except` + `time.sleep()` scattered everywhere. It's fragile, inconsistent, and hard to observe.
-
-**agent-retry** gives you production-grade retry primitives in a single, zero-dependency package.
+</div>
 
 ---
+
+## Overview
+
+`agent-retry` implements **retry strategies and fallback chains for llm agents — exponential backoff, jitter, model fallback, dead letter queue. zero dependencies.**
+
+Inspired by the Vedic principle of *पुनर्जन्म* (Punarjanma), this library brings the ancient wisdom of structured discipline to modern LLM agent engineering.
+
+No external dependencies. Pure Python 3.8+. Drop it in anywhere.
 
 ## Installation
 
@@ -29,184 +34,67 @@ Most teams handle this with ad-hoc `try/except` + `time.sleep()` scattered every
 pip install agent-retry
 ```
 
-Or from source:
-
+Or clone directly:
 ```bash
-git clone https://github.com/darshjme-codes/agent-retry
+git clone https://github.com/darshjme/agent-retry.git
 cd agent-retry
 pip install -e .
 ```
 
----
-
 ## Quick Start
 
-### 1. Basic Retry with Exponential Backoff
-
 ```python
-from agent_retry import RetryExecutor, RetryPolicy
-from agent_retry.exceptions import RetryableError
+from retry import *
 
-policy = RetryPolicy(
-    max_attempts=5,
-    base_delay=1.0,
-    max_delay=30.0,
-    backoff_factor=2.0,
-    jitter=True,
-)
-executor = RetryExecutor(policy)
-
-def call_openai(prompt: str) -> str:
-    # Your actual LLM call here
-    import httpx
-    resp = httpx.post("https://api.openai.com/v1/chat/completions", ...)
-    if resp.status_code == 429:
-        raise RetryableError("Rate limited")
-    return resp.json()["choices"][0]["message"]["content"]
-
-result = executor.execute(call_openai, "Explain quantum entanglement")
-print(f"Got result after {executor.attempts_made} attempt(s)")
+# Initialize
+# See examples/ for full usage patterns
 ```
 
-### 2. Fallback Chain (Try GPT-4 → Claude → Gemini)
+## Why `agent-retry`?
 
-```python
-from agent_retry import FallbackChain
+Production LLM systems fail in predictable ways. `agent-retry` solves the **retry** failure mode with:
 
-def my_llm_caller(model_id: str, prompt: str, **kwargs) -> str:
-    """Your unified LLM caller."""
-    if model_id == "gpt-4":
-        return call_openai(model_id, prompt)
-    elif model_id == "claude-3-opus":
-        return call_anthropic(model_id, prompt)
-    elif model_id == "gemini-pro":
-        return call_gemini(model_id, prompt)
+- **Zero dependencies** — no version conflicts, no bloat
+- **Battle-tested patterns** — extracted from real production systems
+- **Type-safe** — full type hints, mypy-compatible
+- **Minimal surface area** — one job, done well
+- **Composable** — works with any LLM framework (LangChain, LlamaIndex, raw OpenAI, etc.)
 
-chain = FallbackChain(
-    models=["gpt-4", "claude-3-opus", "gemini-pro"],
-    caller=my_llm_caller,
-)
+## The Vedic Arsenal
 
-result = chain.call("Summarize this document: ...")
-print(f"Model used: {result['model_used']}")
-print(f"Attempts needed: {result['attempts']}")
-print(f"Response: {result['result']}")
+`agent-retry` is part of **[darshjme/arsenal](https://github.com/darshjme/arsenal)** — a collection of 100 focused Python libraries for LLM agent infrastructure.
+
+Each library solves exactly one problem. Together they form a complete stack.
+
+```
+pip install agent-retry  # this library
+# Browse all 100: https://github.com/darshjme/arsenal
 ```
 
-### 3. Dead Letter Queue (Capture Permanent Failures)
+## Contributing
 
-```python
-from agent_retry import DeadLetterQueue, RetryExecutor, RetryPolicy
-from agent_retry.exceptions import MaxRetriesExceeded
+Found a bug? Have an improvement?
 
-dlq = DeadLetterQueue(max_size=500)
-executor = RetryExecutor(RetryPolicy(max_attempts=3, base_delay=0.5))
+1. Fork the repo
+2. Create a feature branch (`git checkout -b fix/your-fix`)
+3. Add tests
+4. Open a PR
 
-tasks = [{"id": "task-001", "prompt": "Hello"}, ...]
-
-for task in tasks:
-    try:
-        result = executor.execute(call_llm, task["prompt"])
-        save_result(task["id"], result)
-    except MaxRetriesExceeded as e:
-        dlq.push(
-            task_id=task["id"],
-            func_name="call_llm",
-            args={"prompt": task["prompt"]},
-            error=str(e),
-        )
-
-# Later: inspect / replay failures
-failed = dlq.drain()
-print(f"{len(failed)} tasks permanently failed")
-for item in failed:
-    print(f"  [{item['task_id']}] {item['error']}")
-```
-
----
-
-## Real-World Scenario: Production Batch Inference Pipeline
-
-```python
-from agent_retry import RetryExecutor, RetryPolicy, FallbackChain, DeadLetterQueue
-from agent_retry.exceptions import RetryableError, MaxRetriesExceeded
-
-# Configure resilience
-policy = RetryPolicy(max_attempts=4, base_delay=1.0, max_delay=20.0, jitter=True)
-executor = RetryExecutor(policy)
-dlq = DeadLetterQueue(max_size=1000)
-
-# Primary + fallback models
-chain = FallbackChain(
-    models=["gpt-4-turbo", "claude-3-sonnet", "gemini-1.5-pro"],
-    caller=unified_llm_caller,
-)
-
-# Process 10,000 documents
-documents = load_documents()
-
-for doc in documents:
-    try:
-        # Retry the entire fallback chain
-        result = executor.execute(chain.call, doc["text"], max_tokens=500)
-        store_result(doc["id"], result)
-    except MaxRetriesExceeded as e:
-        dlq.push(doc["id"], "chain.call", {"text": doc["text"][:100]}, str(e))
-
-# End-of-run report
-print(f"Processed: {len(documents) - dlq.size()}/{len(documents)}")
-print(f"Failed (in DLQ): {dlq.size()}")
-```
-
----
-
-## API Reference
-
-### `RetryPolicy`
-
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `max_attempts` | int | 3 | Total attempts including the first |
-| `base_delay` | float | 1.0 | Base delay in seconds |
-| `max_delay` | float | 60.0 | Maximum delay cap in seconds |
-| `backoff_factor` | float | 2.0 | Exponential multiplier |
-| `jitter` | bool | True | Full jitter (random in [0, delay]) |
-
-### `RetryExecutor`
-
-- `execute(func, *args, **kwargs)` — blocking retry with `time.sleep()`
-- `execute_async(func, *args, **kwargs)` — retry with threading-based sleep (interruptible)
-- `attempts_made` — number of attempts on last call
-- `total_delay` — total seconds slept on last call
-- `last_error` — last exception seen
-
-### `FallbackChain`
-
-- `call(prompt, **kwargs)` → `{"model_used", "attempts", "result"}`
-- `add_fallback(model_id, priority=None)` — insert model into chain
-- `get_chain()` → ordered list of model IDs
-
-### `DeadLetterQueue`
-
-- `push(task_id, func_name, args, error)` — enqueue a failed task
-- `pop()` → oldest record or `None`
-- `size()` → current count
-- `drain()` → all items as list, then clears queue
-
-### Exceptions
-
-| Exception | Retryable | Description |
-|-----------|-----------|-------------|
-| `RetryableError` | ✅ | Transient failure — signal for retry |
-| `TimeoutError` | ✅ | Built-in Python timeout |
-| `ConnectionError` | ✅ | Built-in Python connection error |
-| `AuthError` | ❌ | Authentication failure |
-| `ValueError` | ❌ | Bad input |
-| `TypeError` | ❌ | Type error |
-| `MaxRetriesExceeded` | — | Raised when all attempts exhausted |
-
----
+All contributions welcome. Keep it zero-dependency.
 
 ## License
 
-MIT © Darshankumar Joshi
+MIT — use freely, build freely.
+
+---
+
+<div align="center">
+
+**Built with ⚡ by [Darshankumar Joshi](https://github.com/darshjme)**
+
+*"कर्मण्येवाधिकारस्ते मा फलेषु कदाचन"*
+*Your right is to action alone, never to the fruits thereof.*
+
+[Arsenal](https://github.com/darshjme/arsenal) · [GitHub](https://github.com/darshjme) · [Twitter](https://twitter.com/thedarshanjoshi)
+
+</div>
