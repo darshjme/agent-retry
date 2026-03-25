@@ -1,47 +1,36 @@
 <div align="center">
 
-<img src="assets/agent-retry-hero.png" alt="agent-retry — Vedic Arsenal by Darshankumar Joshi" width="100%" />
+<img src="assets/punarjanma-hero.png" alt="पुनर्जन्म — punarjanma by Darshankumar Joshi" width="100%" />
 
-# ⚡ agent-retry
+# 🔮 पुनर्जन्म
+## `punarjanma`
 
-<h3><em>पुनर्जन्म</em></h3>
+> *Upanishads / Bhagavad Gita 2.20*
 
-> *Punarjanma — the eternal cycle of retry until moksha*
+### Rebirth — the eternal cycle
 
-**Retry strategies and fallback chains for LLM agents — exponential backoff, jitter, model fallback, dead letter queue. Zero dependencies.**
+**Resilient retry strategies for LLM agents: exponential backoff, jitter, circuit-breaker patterns. Zero dependencies.**
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=flat-square&logo=python)](https://python.org)
-[![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero-brightgreen?style=flat-square)](https://github.com/darshjme/agent-retry)
-[![Tests](https://img.shields.io/badge/Tests-Passing-success?style=flat-square)](https://github.com/darshjme/agent-retry/actions)
-[![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
+[![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero-brightgreen?style=flat-square)](https://github.com/darshjme/punarjanma)
 [![Vedic Arsenal](https://img.shields.io/badge/Vedic%20Arsenal-100%20libs-purple?style=flat-square)](https://github.com/darshjme/arsenal)
+[![License](https://img.shields.io/badge/License-MIT-purple?style=flat-square)](LICENSE)
 
-*Part of the [**Vedic Arsenal**](https://github.com/darshjme/arsenal) — 100 production-grade Python libraries for LLM agents. Zero dependencies. Battle-tested.*
+*Formerly `agent-retry` — Part of the [**Vedic Arsenal**](https://github.com/darshjme/arsenal): 100 production-grade Python libraries for LLM agents, each named from the Vedas, Puranas, and Mahakavyas.*
 
 </div>
 
 ---
 
-## Overview
+## The Vedic Principle
 
-`agent-retry` implements **retry strategies and fallback chains for llm agents — exponential backoff, jitter, model fallback, dead letter queue. zero dependencies.**
+In the Bhagavad Gita, Lord Krishna reveals to Arjuna: *"na jāyate mriyate vā kadācin"* — the soul is never born, never dies. It returns, again and again, until liberation.
 
-Inspired by the Vedic principle of *पुनर्जन्म* (Punarjanma), this library brings the ancient wisdom of structured discipline to modern LLM agent engineering.
+`punarjanma` brings this eternal principle to LLM agent engineering. When your API call fails, when the model returns garbage, when the network drops — the agent **returns**. Exponential backoff is not failure. It is the dharmic cycle of persistence, each attempt purified by the lessons of the last.
 
-No external dependencies. Pure Python 3.8+. Drop it in anywhere.
+Just as the soul accumulates wisdom across lifetimes to finally achieve moksha, your agent accumulates context across retries to finally achieve its goal. The dead letter queue is not defeat — it is the end of a cycle, the completion of karma.
 
-## Installation
-
-```bash
-pip install agent-retry
-```
-
-Or clone directly:
-```bash
-git clone https://github.com/darshjme/agent-retry.git
-cd agent-retry
-pip install -e .
-```
+---
 
 ## How It Works
 
@@ -49,69 +38,66 @@ pip install -e .
 flowchart LR
     A[LLM Call] --> B{Success?}
     B -- Yes --> C[Return Result]
-    B -- No --> D[agent-retry]
+    B -- No --> D[punarjanma]
     D --> E{Attempts < Max?}
     E -- Yes --> F[Exponential Backoff]
     F --> A
     E -- No --> G[Dead Letter Queue]
     style D fill:#6b21a8,color:#fff
-    style F fill:#1a0a2e,color:#9b59b6
+```
+
+---
+
+## Installation
+
+```bash
+pip install punarjanma
+```
+
+Or from source:
+```bash
+git clone https://github.com/darshjme/punarjanma.git
+cd punarjanma && pip install -e .
 ```
 
 ## Quick Start
 
 ```python
-from retry import *
+from punarjanma import *
 
-# Initialize
-# See examples/ for full usage patterns
+# See examples/ for full usage
 ```
 
-## Why `agent-retry`?
-
-Production LLM systems fail in predictable ways. `agent-retry` solves the **retry** failure mode with:
-
-- **Zero dependencies** — no version conflicts, no bloat
-- **Battle-tested patterns** — extracted from real production systems
-- **Type-safe** — full type hints, mypy-compatible
-- **Minimal surface area** — one job, done well
-- **Composable** — works with any LLM framework (LangChain, LlamaIndex, raw OpenAI, etc.)
+---
 
 ## The Vedic Arsenal
 
-`agent-retry` is part of **[darshjme/arsenal](https://github.com/darshjme/arsenal)** — a collection of 100 focused Python libraries for LLM agent infrastructure.
+`punarjanma` is one of 100 libraries in **[darshjme/arsenal](https://github.com/darshjme/arsenal)** — each named from sacred Indian literature:
 
-Each library solves exactly one problem. Together they form a complete stack.
+| Sanskrit Name | Source | Technical Function |
+|---|---|---|
+| `punarjanma` | Upanishads / Bhagavad Gita 2.20 | Rebirth — the eternal cycle |
 
-```
-pip install agent-retry  # this library
-# Browse all 100: https://github.com/darshjme/arsenal
-```
+Each library solves one problem. Zero external dependencies. Pure Python 3.8+.
+
+---
 
 ## Contributing
 
-Found a bug? Have an improvement?
-
 1. Fork the repo
-2. Create a feature branch (`git checkout -b fix/your-fix`)
-3. Add tests
+2. Create feature branch (`git checkout -b fix/your-fix`)  
+3. Add tests — zero dependencies only
 4. Open a PR
-
-All contributions welcome. Keep it zero-dependency.
-
-## License
-
-MIT — use freely, build freely.
 
 ---
 
 <div align="center">
 
-**Built with ⚡ by [Darshankumar Joshi](https://github.com/darshjme)** · [@thedarshanjoshi](https://twitter.com/thedarshanjoshi)
+**🔮 Built by [Darshankumar Joshi](https://github.com/darshjme)** · [@thedarshanjoshi](https://twitter.com/thedarshanjoshi)
 
 *"कर्मण्येवाधिकारस्ते मा फलेषु कदाचन"*
-*Your right is to action alone, never to the fruits thereof.*
+*Your right is to action alone, never to its fruits. — Bhagavad Gita 2.47*
 
-[Arsenal](https://github.com/darshjme/arsenal) · [GitHub](https://github.com/darshjme) · [Twitter](https://twitter.com/thedarshanjoshi)
+[Vedic Arsenal](https://github.com/darshjme/arsenal) · [GitHub](https://github.com/darshjme) · [Twitter](https://twitter.com/thedarshanjoshi)
 
 </div>
